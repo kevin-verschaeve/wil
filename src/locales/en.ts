@@ -18,10 +18,8 @@ export const en: Dict = {
     deleteConfirmBody: 'This action cannot be undone.',
   },
   tabs: {
-    programme: 'Programme',
-    lineup: 'Lineup',
-    schedule: 'My schedule',
     lessons: 'Lessons',
+    festival: 'Festival',
     more: 'More',
   },
   auth: {
@@ -66,6 +64,12 @@ export const en: Dict = {
     description: 'Description',
     registrationFailed: 'Registration failed. The activity may be full.',
   },
+  festival: {
+    noEditionTitle: 'The Westy Welsh is coming back soon!',
+    noEditionBody:
+      'The Westy Welsh is West in Lille\u2019s West Coast Swing festival: a weekend of workshops, parties and dancing. The next edition\u2019s programme will be announced here.',
+    infos: 'Info',
+  },
   lineup: {
     title: 'Lineup',
     empty: 'The lineup will be announced soon.',
@@ -104,11 +108,10 @@ export const en: Dict = {
     participants: 'Participants',
     noParticipants: 'No one registered yet.',
     unregisterConfirm: 'Unregister from this lesson?',
+    association: 'The association',
   },
   more: {
     title: 'More',
-    infos: 'Practical info',
-    floorplan: 'Site map',
     profile: 'My profile',
     admin: 'Administration',
     signInHint: 'Sign in to register for activities and lessons.',
@@ -194,6 +197,8 @@ export const en: Dict = {
     titleEn: 'Title (EN)',
     bodyFr: 'Body (FR)',
     bodyEn: 'Body (EN)',
+    festivalPage: 'Festival page',
+    festivalPageHint: 'Attached to the current edition (otherwise it is an association page)',
     noEditionYet: 'Create an edition first.',
     requiredFields: 'Please fill in the required fields.',
   },

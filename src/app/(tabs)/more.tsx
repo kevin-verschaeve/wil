@@ -8,16 +8,14 @@ import { ListRow } from '@/components/ui/list-row';
 import { ErrorView } from '@/components/ui/loading';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
-import { useInfoPages, infoTitle } from '@/hooks/use-info';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/providers/auth-provider';
-import { useLocale } from '@/providers/locale-provider';
+import { useT } from '@/providers/locale-provider';
 
 export default function MoreScreen() {
   const theme = useTheme();
-  const { locale, t } = useLocale();
+  const t = useT();
   const { session, profile, isAdmin, profileError, refreshProfile } = useAuth();
-  const infoPages = useInfoPages();
 
   return (
     <Screen safeTop>
@@ -46,41 +44,19 @@ export default function MoreScreen() {
         </Card>
       )}
 
-      <View style={styles.section}>
-        <ListRow icon="map" title={t('more.floorplan')} onPress={() => router.push('/floorplan')} />
-        {infoPages.isError ? (
-          <ErrorView message={infoPages.error?.message} onRetry={() => infoPages.refetch()} />
-        ) : null}
-        {(infoPages.data ?? [])
-          .filter((page) => page.published)
-          .map((page) => (
-            <ListRow
-              key={page.id}
-              icon={(page.icon || 'information-circle') as never}
-              title={infoTitle(page, locale)}
-              onPress={() => router.push({ pathname: '/info/[slug]', params: { slug: page.slug } })}
-            />
-          ))}
-      </View>
-
       {isAdmin ? (
-        <View style={styles.section}>
-          <ListRow
-            icon="settings"
-            title={t('more.admin')}
-            subtitle={t('admin.subtitle')}
-            onPress={() => router.push('/admin')}
-          />
-        </View>
+        <ListRow
+          icon="settings"
+          title={t('more.admin')}
+          subtitle={t('admin.subtitle')}
+          onPress={() => router.push('/admin')}
+        />
       ) : null}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  section: {
-    gap: Spacing.md,
-  },
   signInCard: {
     flexDirection: 'row',
     alignItems: 'center',

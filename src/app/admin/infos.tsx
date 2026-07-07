@@ -26,7 +26,13 @@ export default function AdminInfoPagesScreen() {
             icon={(page.icon || 'information-circle') as never}
             title={infoTitle(page, locale)}
             subtitle={page.slug}
-            right={!page.published ? <Badge label={t('admin.published')} tone="neutral" /> : undefined}
+            right={
+              page.edition_id ? (
+                <Badge label={t('tabs.festival')} tone="primary" />
+              ) : !page.published ? (
+                <Badge label={t('admin.published')} tone="neutral" />
+              ) : undefined
+            }
             onPress={() => router.push({ pathname: '/admin/info-form', params: { id: page.id } })}
           />
         ))

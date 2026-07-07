@@ -16,10 +16,8 @@ export const fr = {
     deleteConfirmBody: 'Cette action est définitive.',
   },
   tabs: {
-    programme: 'Programme',
-    lineup: 'Line-up',
-    schedule: 'Mon planning',
     lessons: 'Cours',
+    festival: 'Festival',
     more: 'Plus',
   },
   auth: {
@@ -64,6 +62,12 @@ export const fr = {
     description: 'Description',
     registrationFailed: "L'inscription a échoué. L'activité est peut-être complète.",
   },
+  festival: {
+    noEditionTitle: 'Le Westy Welsh revient bientôt !',
+    noEditionBody:
+      'Le Westy Welsh, c\u2019est le festival de West Coast Swing de West in Lille : un week-end de stages, de soirées et de danse. Le programme de la prochaine édition sera annoncé ici.',
+    infos: 'Infos',
+  },
   lineup: {
     title: 'Line-up',
     empty: 'Le line-up sera bientôt annoncé.',
@@ -102,11 +106,10 @@ export const fr = {
     participants: 'Participants',
     noParticipants: 'Personne d’inscrit pour le moment.',
     unregisterConfirm: 'Se désinscrire de ce cours ?',
+    association: 'L\u2019association',
   },
   more: {
     title: 'Plus',
-    infos: 'Infos pratiques',
-    floorplan: 'Plan du site',
     profile: 'Mon profil',
     admin: 'Administration',
     signInHint: 'Connectez-vous pour vous inscrire aux activités et aux cours.',
@@ -192,6 +195,8 @@ export const fr = {
     titleEn: 'Titre (EN)',
     bodyFr: 'Contenu (FR)',
     bodyEn: 'Contenu (EN)',
+    festivalPage: 'Page du festival',
+    festivalPageHint: 'Rattachée à l\u2019édition en cours (sinon, page de l\u2019association)',
     noEditionYet: 'Créez d’abord une édition.',
     requiredFields: 'Merci de remplir les champs obligatoires.',
   },

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoadingView } from '@/components/ui/loading';
 import { Screen } from '@/components/ui/screen';
+import { useCurrentEdition } from '@/hooks/use-festival';
 import { useDeleteInfoPage, useInfoPages, useUpsertInfoPage } from '@/hooks/use-info';
 import type { InfoPage } from '@/lib/types';
 import { useT } from '@/providers/locale-provider';
@@ -38,7 +39,9 @@ export default function InfoPageFormScreen() {
 
 function InfoPageForm({ existing, pageCount }: { existing: InfoPage | undefined; pageCount: number }) {
   const t = useT();
+  const edition = useCurrentEdition();
 
+  const [isFestivalPage, setIsFestivalPage] = useState(!!existing?.edition_id);
   const [slug, setSlug] = useState(existing?.slug ?? '');
   const [icon, setIcon] = useState(existing?.icon ?? 'information-circle');
   const [titleFr, setTitleFr] = useState(existing?.title_fr ?? '');
@@ -58,6 +61,7 @@ function InfoPageForm({ existing, pageCount }: { existing: InfoPage | undefined;
     try {
       await upsert.mutateAsync({
         ...(existing ? { id: existing.id } : {}),
+        edition_id: isFestivalPage ? (existing?.edition_id ?? edition.data?.id ?? null) : null,
         slug: slug.trim() || slugify(titleFr),
         icon: icon.trim() || 'information-circle',
         title_fr: titleFr.trim(),
@@ -96,6 +100,12 @@ function InfoPageForm({ existing, pageCount }: { existing: InfoPage | undefined;
         autoCapitalize="none"
       />
       <Input label={t('admin.icon')} value={icon} onChangeText={setIcon} autoCapitalize="none" />
+      <SwitchRow
+        label={t('admin.festivalPage')}
+        hint={t('admin.festivalPageHint')}
+        value={isFestivalPage}
+        onChange={setIsFestivalPage}
+      />
       <SwitchRow label={t('admin.published')} value={published} onChange={setPublished} />
       <Button label={t('common.save')} onPress={save} loading={upsert.isPending} />
       {existing ? (

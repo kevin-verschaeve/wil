@@ -81,6 +81,8 @@ export interface FloorplanPoi {
 
 export interface InfoPage {
   id: string;
+  /** null = association page (year-round); set = page of that festival edition. */
+  edition_id: string | null;
   slug: string;
   icon: string;
   sort_order: number;
