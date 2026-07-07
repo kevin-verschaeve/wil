@@ -1,4 +1,5 @@
 import type { Session } from '@supabase/supabase-js';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -9,10 +10,12 @@ interface AuthContextValue {
   profile: Profile | null;
   /** True while the initial session is being restored. */
   loading: boolean;
+  /** Non-null when the signed-in user's profile could not be loaded. */
+  profileError: string | null;
   isAdmin: boolean;
   isTeacher: boolean;
   signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
+  refreshProfile: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -20,9 +23,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(isSupabaseConfigured);
-  // Keep the owning user id next to the profile so a stale profile is never
-  // shown for a different session (derived below instead of cleared in an effect).
-  const [profileEntry, setProfileEntry] = useState<{ userId: string; profile: Profile | null } | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -40,42 +41,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const userId = session?.user.id;
 
-  useEffect(() => {
-    if (!userId) return;
-    let cancelled = false;
-    fetchProfile(userId).then((profile) => {
-      if (!cancelled) setProfileEntry({ userId, profile });
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  const profileQuery = useQuery({
+    queryKey: ['profile', userId],
+    enabled: !!userId && isSupabaseConfigured,
+    retry: 2,
+    staleTime: 30 * 1000,
+    queryFn: async (): Promise<Profile | null> => {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId!).maybeSingle();
+      if (error) throw new Error(error.message);
+      return (data as Profile | null) ?? null;
+    },
+  });
 
-  const profile = userId && profileEntry?.userId === userId ? profileEntry.profile : null;
+  // Drop cached user-specific data when the account changes (sign-out / switch).
+  useEffect(() => {
+    if (!userId) {
+      queryClient.removeQueries({ queryKey: ['profile'] });
+      queryClient.removeQueries({ queryKey: ['activity-registrations'] });
+      queryClient.removeQueries({ queryKey: ['lesson-registrations'] });
+    }
+  }, [userId, queryClient]);
+
+  const profile = (userId ? profileQuery.data : null) ?? null;
+  const { isError: profileIsError, error: profileQueryError, refetch: refetchProfile } = profileQuery;
 
   const value = useMemo<AuthContextValue>(
     () => ({
       session,
       profile,
       loading,
+      profileError: userId && profileIsError ? String(profileQueryError?.message ?? '') : null,
       isAdmin: profile?.role === 'admin',
       isTeacher: profile?.role === 'teacher' || profile?.role === 'admin',
       signOut: async () => {
         await supabase.auth.signOut();
       },
-      refreshProfile: async () => {
-        if (userId) setProfileEntry({ userId, profile: await fetchProfile(userId) });
+      refreshProfile: () => {
+        refetchProfile();
       },
     }),
-    [session, profile, loading, userId],
+    [session, profile, loading, userId, profileIsError, profileQueryError, refetchProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-async function fetchProfile(userId: string): Promise<Profile | null> {
-  const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
-  return (data as Profile | null) ?? null;
 }
 
 export function useAuth(): AuthContextValue {

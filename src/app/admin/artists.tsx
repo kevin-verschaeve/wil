@@ -36,7 +36,7 @@ export default function AdminArtistsScreen() {
       {artists.isLoading ? (
         <LoadingView />
       ) : artists.isError ? (
-        <ErrorView onRetry={() => artists.refetch()} />
+        <ErrorView message={artists.error?.message} onRetry={() => artists.refetch()} />
       ) : (
         (artists.data ?? []).map((artist) => (
           <ListRow

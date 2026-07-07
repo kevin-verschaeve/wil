@@ -18,7 +18,7 @@ export default function AdminInfoPagesScreen() {
       {pages.isLoading ? (
         <LoadingView />
       ) : pages.isError ? (
-        <ErrorView onRetry={() => pages.refetch()} />
+        <ErrorView message={pages.error?.message} onRetry={() => pages.refetch()} />
       ) : (
         (pages.data ?? []).map((page) => (
           <ListRow

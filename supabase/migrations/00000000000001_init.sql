@@ -237,11 +237,30 @@ alter table public.lesson_registrations enable row level security;
 -- Profiles: users see/update themselves; admins see/update everyone.
 create policy "profiles_select_own_or_admin" on public.profiles
   for select using (id = auth.uid() or public.is_admin());
+-- Note: no subquery on profiles here — a policy that reads its own table
+-- fails at run time with "infinite recursion detected in policy".
+-- Role changes are guarded by the prevent_role_escalation trigger instead.
 create policy "profiles_update_own" on public.profiles
-  for update using (id = auth.uid())
-  with check (id = auth.uid() and role = (select p.role from public.profiles p where p.id = auth.uid()));
-create policy "profiles_admin_update" on public.profiles
-  for update using (public.is_admin());
+  for update using (id = auth.uid() or public.is_admin())
+  with check (id = auth.uid() or public.is_admin());
+
+create or replace function public.prevent_role_escalation()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  -- auth.uid() is null for dashboard/SQL-editor/service-role access: allow those.
+  if new.role is distinct from old.role and auth.uid() is not null and not public.is_admin() then
+    raise exception 'only admins can change roles';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger profiles_prevent_role_escalation
+  before update on public.profiles
+  for each row execute function public.prevent_role_escalation();
 
 -- Teachers may see the profiles of people registered to their lessons.
 create policy "profiles_select_teacher_participants" on public.profiles

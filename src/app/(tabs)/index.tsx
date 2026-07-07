@@ -56,7 +56,7 @@ export default function ProgrammeScreen() {
       toggle.mutate(
         { activityId, registered },
         {
-          onError: () => Alert.alert(t('errors.generic'), t('activity.registrationFailed')),
+          onError: (e) => Alert.alert(t('activity.registrationFailed'), e.message),
         },
       ),
     );
@@ -71,7 +71,7 @@ export default function ProgrammeScreen() {
   if (edition.isError) {
     return (
       <Screen safeTop scroll={false}>
-        <ErrorView onRetry={() => edition.refetch()} />
+        <ErrorView message={edition.error?.message} onRetry={() => edition.refetch()} />
       </Screen>
     );
   }
@@ -133,6 +133,8 @@ export default function ProgrammeScreen() {
 
       {activities.isLoading ? (
         <LoadingView />
+      ) : activities.isError ? (
+        <ErrorView message={activities.error?.message} onRetry={() => activities.refetch()} />
       ) : dayActivities.length === 0 ? (
         <EmptyState icon="calendar-outline" title={t('programme.noActivities')} />
       ) : (

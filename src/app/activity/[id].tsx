@@ -37,7 +37,7 @@ export default function ActivityDetailScreen() {
   );
 
   if (activity.isLoading) return <LoadingView />;
-  if (activity.isError || !activity.data) return <ErrorView onRetry={() => activity.refetch()} />;
+  if (activity.isError || !activity.data) return <ErrorView message={activity.error?.message} onRetry={() => activity.refetch()} />;
 
   const data = activity.data;
   const registeredCount = counts.data?.[data.id] ?? 0;
@@ -48,7 +48,7 @@ export default function ActivityDetailScreen() {
     requireAuth(() =>
       toggle.mutate(
         { activityId: data.id, registered },
-        { onError: () => Alert.alert(t('errors.generic'), t('activity.registrationFailed')) },
+        { onError: (e) => Alert.alert(t('activity.registrationFailed'), e.message) },
       ),
     );
 

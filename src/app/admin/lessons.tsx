@@ -20,7 +20,7 @@ export default function AdminLessonsScreen() {
       {lessons.isLoading ? (
         <LoadingView />
       ) : lessons.isError ? (
-        <ErrorView onRetry={() => lessons.refetch()} />
+        <ErrorView message={lessons.error?.message} onRetry={() => lessons.refetch()} />
       ) : (
         (lessons.data ?? []).map((lesson) => {
           const lessonCounts = counts.data?.[lesson.id];

@@ -45,7 +45,7 @@ export default function LessonDetailScreen() {
   );
 
   if (lesson.isLoading) return <LoadingView />;
-  if (lesson.isError || !lesson.data) return <ErrorView onRetry={() => lesson.refetch()} />;
+  if (lesson.isError || !lesson.data) return <ErrorView message={lesson.error?.message} onRetry={() => lesson.refetch()} />;
 
   const data = lesson.data;
   const lessonCounts = counts.data?.[data.id];
@@ -53,7 +53,7 @@ export default function LessonDetailScreen() {
 
   const onRegister = () =>
     requireAuth(() =>
-      register.mutate(data.id, { onError: () => Alert.alert(t('errors.generic')) }),
+      register.mutate(data.id, { onError: (e) => Alert.alert(t('errors.generic'), e.message) }),
     );
 
   const onUnregister = () =>
@@ -62,7 +62,7 @@ export default function LessonDetailScreen() {
       {
         text: t('lessons.unregister'),
         style: 'destructive',
-        onPress: () => unregister.mutate(data.id, { onError: () => Alert.alert(t('errors.generic')) }),
+        onPress: () => unregister.mutate(data.id, { onError: (e) => Alert.alert(t('errors.generic'), e.message) }),
       },
     ]);
 

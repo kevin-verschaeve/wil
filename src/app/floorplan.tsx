@@ -24,7 +24,7 @@ export default function FloorplanScreen() {
   const floorplan = useFloorplan(edition.data?.id);
 
   if (edition.isLoading || floorplan.isLoading) return <LoadingView />;
-  if (floorplan.isError) return <ErrorView onRetry={() => floorplan.refetch()} />;
+  if (floorplan.isError) return <ErrorView message={floorplan.error?.message} onRetry={() => floorplan.refetch()} />;
   if (!floorplan.data) {
     return (
       <Screen scroll={false} contentStyle={styles.centered}>

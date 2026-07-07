@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
 import { Card } from '@/components/ui/card';
 import { ListRow } from '@/components/ui/list-row';
+import { ErrorView } from '@/components/ui/loading';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
 import { useInfoPages, infoTitle } from '@/hooks/use-info';
@@ -15,7 +16,7 @@ import { useLocale } from '@/providers/locale-provider';
 export default function MoreScreen() {
   const theme = useTheme();
   const { locale, t } = useLocale();
-  const { session, profile, isAdmin } = useAuth();
+  const { session, profile, isAdmin, profileError, refreshProfile } = useAuth();
   const infoPages = useInfoPages();
 
   return (
@@ -23,12 +24,15 @@ export default function MoreScreen() {
       <AppText variant="display">{t('more.title')}</AppText>
 
       {session ? (
-        <ListRow
-          icon="person"
-          title={profile?.full_name || session.user.email || ''}
-          subtitle={t(`profile.roles.${profile?.role ?? 'member'}`)}
-          onPress={() => router.push('/profile')}
-        />
+        <>
+          <ListRow
+            icon="person"
+            title={profile?.full_name || session.user.email || ''}
+            subtitle={t(`profile.roles.${profile?.role ?? 'member'}`)}
+            onPress={() => router.push('/profile')}
+          />
+          {profileError ? <ErrorView message={profileError} onRetry={refreshProfile} /> : null}
+        </>
       ) : (
         <Card onPress={() => router.push('/(auth)/sign-in')} style={styles.signInCard}>
           <Ionicons name="person-circle-outline" size={32} color={theme.primary} />
@@ -44,6 +48,9 @@ export default function MoreScreen() {
 
       <View style={styles.section}>
         <ListRow icon="map" title={t('more.floorplan')} onPress={() => router.push('/floorplan')} />
+        {infoPages.isError ? (
+          <ErrorView message={infoPages.error?.message} onRetry={() => infoPages.refetch()} />
+        ) : null}
         {(infoPages.data ?? [])
           .filter((page) => page.published)
           .map((page) => (

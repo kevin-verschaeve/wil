@@ -24,7 +24,7 @@ export default function AdminEditionsScreen() {
       {editions.isLoading ? (
         <LoadingView />
       ) : editions.isError ? (
-        <ErrorView onRetry={() => editions.refetch()} />
+        <ErrorView message={editions.error?.message} onRetry={() => editions.refetch()} />
       ) : (editions.data?.length ?? 0) === 0 ? (
         <AppText color="textSecondary">{t('admin.noEditionYet')}</AppText>
       ) : (

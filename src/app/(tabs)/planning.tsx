@@ -5,7 +5,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { ActivityCard } from '@/components/activity-card';
 import { AppText } from '@/components/ui/app-text';
 import { EmptyState } from '@/components/ui/empty-state';
-import { LoadingView } from '@/components/ui/loading';
+import { ErrorView, LoadingView } from '@/components/ui/loading';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
 import {
@@ -61,6 +61,14 @@ export default function PlanningScreen() {
       <AppText variant="display">{t('schedule.title')}</AppText>
       {activities.isLoading || registrations.isLoading ? (
         <LoadingView />
+      ) : activities.isError || registrations.isError ? (
+        <ErrorView
+          message={activities.error?.message ?? registrations.error?.message}
+          onRetry={() => {
+            activities.refetch();
+            registrations.refetch();
+          }}
+        />
       ) : byDay.length === 0 ? (
         <EmptyState
           icon="heart-outline"
@@ -85,7 +93,7 @@ export default function PlanningScreen() {
                 onToggle={() =>
                   toggle.mutate(
                     { activityId: activity.id, registered: true },
-                    { onError: () => Alert.alert(t('errors.generic')) },
+                    { onError: (e) => Alert.alert(t('errors.generic'), e.message) },
                   )
                 }
               />

@@ -15,13 +15,18 @@ export function LoadingView() {
   );
 }
 
-export function ErrorView({ message, onRetry }: { message?: string; onRetry?: () => void }) {
+export function ErrorView({ message, onRetry }: { message?: string | null; onRetry?: () => void }) {
   const t = useT();
   return (
     <View style={styles.wrap}>
       <AppText color="textSecondary" style={styles.center}>
-        {message ?? t('errors.generic')}
+        {t('errors.generic')}
       </AppText>
+      {message ? (
+        <AppText variant="caption" color="danger" style={styles.center} selectable>
+          {message}
+        </AppText>
+      ) : null}
       {onRetry ? <Button label={t('common.retry')} variant="secondary" onPress={onRetry} /> : null}
     </View>
   );

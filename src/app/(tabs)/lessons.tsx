@@ -41,7 +41,7 @@ export default function LessonsScreen() {
       {lessons.isLoading ? (
         <LoadingView />
       ) : lessons.isError ? (
-        <ErrorView onRetry={() => lessons.refetch()} />
+        <ErrorView message={lessons.error?.message} onRetry={() => lessons.refetch()} />
       ) : byWeekday.length === 0 ? (
         <EmptyState icon="body-outline" title={t('lessons.empty')} />
       ) : (

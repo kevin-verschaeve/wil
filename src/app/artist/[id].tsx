@@ -28,7 +28,7 @@ export default function ArtistDetailScreen() {
   );
 
   if (artist.isLoading) return <LoadingView />;
-  if (artist.isError || !artist.data) return <ErrorView onRetry={() => artist.refetch()} />;
+  if (artist.isError || !artist.data) return <ErrorView message={artist.error?.message} onRetry={() => artist.refetch()} />;
 
   const data = artist.data;
 

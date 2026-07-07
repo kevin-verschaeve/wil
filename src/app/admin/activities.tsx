@@ -54,7 +54,7 @@ export default function AdminActivitiesScreen() {
       {activities.isLoading ? (
         <LoadingView />
       ) : activities.isError ? (
-        <ErrorView onRetry={() => activities.refetch()} />
+        <ErrorView message={activities.error?.message} onRetry={() => activities.refetch()} />
       ) : (
         byDay.map(([day, dayActivities]) => (
           <View key={day} style={styles.section}>

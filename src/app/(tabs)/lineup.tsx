@@ -24,7 +24,7 @@ export default function LineupScreen() {
       {edition.isLoading || artists.isLoading ? (
         <LoadingView />
       ) : artists.isError ? (
-        <ErrorView onRetry={() => artists.refetch()} />
+        <ErrorView message={artists.error?.message} onRetry={() => artists.refetch()} />
       ) : (artists.data?.length ?? 0) === 0 ? (
         <EmptyState icon="musical-notes-outline" title={t('lineup.empty')} />
       ) : (

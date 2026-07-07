@@ -13,7 +13,7 @@ export default function InfoPageScreen() {
 
   if (pages.isLoading) return <LoadingView />;
   const page = (pages.data ?? []).find((p) => p.slug === slug);
-  if (!page) return <ErrorView onRetry={() => pages.refetch()} />;
+  if (!page) return <ErrorView message={pages.error?.message} onRetry={() => pages.refetch()} />;
 
   return (
     <>

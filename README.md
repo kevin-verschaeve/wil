@@ -35,7 +35,8 @@ lessons, built with [Expo](https://expo.dev) (React Native + TypeScript) and
 ### 1. Create the Supabase project
 
 1. Create a project on [supabase.com](https://supabase.com).
-2. In the SQL editor, run `supabase/migrations/00000000000001_init.sql`.
+2. In the SQL editor, run the files in `supabase/migrations/` **in order**
+   (`00000000000001_init.sql`, then `00000000000002_fix_profiles_policies.sql`, …).
 3. (Optional) Run `supabase/seed.sql` for demo content — an edition, artists,
    activities, info pages and lessons.
 
@@ -117,6 +118,22 @@ client: public content is world-readable, users can only write their own
 registrations, `is_admin()` gates every admin mutation, and teachers can only read
 registrations of their own lessons. Capacity rules (activity full, lesson waitlist)
 are enforced by database triggers, so they hold even under concurrent registrations.
+
+## Troubleshooting
+
+Screens show the underlying Supabase error message under “Une erreur est
+survenue”. The common ones:
+
+- **“Could not find the table 'public.editions' in the schema cache” (PGRST205)**
+  — PostgREST hasn't picked up the new tables yet. In the SQL editor run
+  `notify pgrst, 'reload schema';` (or just wait a minute), then pull to retry.
+- **“infinite recursion detected in policy for relation profiles”** — you are on
+  the old schema; run `supabase/migrations/00000000000002_fix_profiles_policies.sql`.
+- **“permission denied for table …”** — the migration was executed with a role
+  other than `postgres`; re-run it from the Supabase dashboard's SQL editor.
+- **Profile shows no name/role after sign-up** — the profile row is created by
+  the `on_auth_user_created` trigger; check it exists in `public.profiles`, then
+  use the retry button on the profile screen (the app retries automatically too).
 
 ## Development
 

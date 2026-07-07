@@ -6,6 +6,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ErrorView } from '@/components/ui/loading';
 import { Spacing } from '@/constants/theme';
 import { Screen } from '@/components/ui/screen';
 import { useAuth } from '@/providers/auth-provider';
@@ -13,7 +14,7 @@ import { useLocale } from '@/providers/locale-provider';
 
 export default function ProfileScreen() {
   const { locale, setLocale, t } = useLocale();
-  const { session, profile, signOut } = useAuth();
+  const { session, profile, signOut, profileError, refreshProfile } = useAuth();
 
   const onSignOut = async () => {
     await signOut();
@@ -22,6 +23,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen>
+      {profileError ? <ErrorView message={profileError} onRetry={refreshProfile} /> : null}
       <Card style={styles.card}>
         <View style={styles.row}>
           <AppText variant="label" color="textSecondary">
