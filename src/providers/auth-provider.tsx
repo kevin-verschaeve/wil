@@ -10,6 +10,8 @@ interface AuthContextValue {
   profile: Profile | null;
   /** True while the initial session is being restored. */
   loading: boolean;
+  /** True while the signed-in user's profile (and thus role) is being loaded. */
+  profileLoading: boolean;
   /** Non-null when the signed-in user's profile could not be loaded. */
   profileError: string | null;
   isAdmin: boolean;
@@ -63,13 +65,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [userId, queryClient]);
 
   const profile = (userId ? profileQuery.data : null) ?? null;
-  const { isError: profileIsError, error: profileQueryError, refetch: refetchProfile } = profileQuery;
+  const {
+    isError: profileIsError,
+    isPending: profileIsPending,
+    error: profileQueryError,
+    refetch: refetchProfile,
+  } = profileQuery;
 
   const value = useMemo<AuthContextValue>(
     () => ({
       session,
       profile,
       loading,
+      profileLoading: !!userId && profileIsPending,
       profileError: userId && profileIsError ? String(profileQueryError?.message ?? '') : null,
       isAdmin: profile?.role === 'admin',
       isTeacher: profile?.role === 'teacher' || profile?.role === 'admin',
@@ -80,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refetchProfile();
       },
     }),
-    [session, profile, loading, userId, profileIsError, profileQueryError, refetchProfile],
+    [session, profile, loading, userId, profileIsPending, profileIsError, profileQueryError, refetchProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

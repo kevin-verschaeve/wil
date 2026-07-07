@@ -5,10 +5,12 @@ import { useT } from '@/providers/locale-provider';
 
 /** Admin area — only reachable with the admin role. */
 export default function AdminLayout() {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin, loading, profileLoading } = useAuth();
   const t = useT();
 
-  if (loading) return null;
+  // Wait for both the session and the profile: the role isn't known until
+  // the profile has loaded (e.g. cold start directly on an admin screen).
+  if (loading || profileLoading) return null;
   if (!isAdmin) return <Redirect href="/(tabs)" />;
 
   return (
@@ -24,6 +26,8 @@ export default function AdminLayout() {
       <Stack.Screen name="lesson-form" options={{ title: t('admin.editLesson') }} />
       <Stack.Screen name="infos" options={{ title: t('admin.infoPages') }} />
       <Stack.Screen name="info-form" options={{ title: t('admin.editInfoPage') }} />
+      <Stack.Screen name="users" options={{ title: t('admin.users') }} />
+      <Stack.Screen name="user-form" options={{ title: t('admin.editUser') }} />
     </Stack>
   );
 }

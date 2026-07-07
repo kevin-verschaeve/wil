@@ -39,6 +39,12 @@ export default function AdminHomeScreen() {
         subtitle={t('admin.infoPagesHint')}
         onPress={() => router.push('/admin/infos')}
       />
+      <ListRow
+        icon="people"
+        title={t('admin.users')}
+        subtitle={t('admin.usersHint')}
+        onPress={() => router.push('/admin/users')}
+      />
     </Screen>
   );
 }
