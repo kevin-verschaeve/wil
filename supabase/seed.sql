@@ -6,9 +6,10 @@
 --   • Festival: the "Westy Welsh" edition, its programme, guest pros and
 --     festival-scoped info pages (edition_id set to the edition).
 --
--- The Westy Welsh programme below is a realistic placeholder (the source page
--- could not be fetched automatically) — adapt titles, dates, pros and passes
--- from westinlille.odoo.com/westy-welsh via the in-app admin.
+-- The Westy Welsh content comes from westinlille.odoo.com/westy-welsh
+-- (edition 2026, 29–31 May, Btwin Village). The detailed workshop timetable
+-- and prices are published as images on the site — the workshop times below
+-- are provisional placeholders to refine via the in-app admin.
 --
 -- Re-runnable: it first deletes the rows it seeds (which cascades any
 -- registrations attached to them), then inserts fresh data.
@@ -16,9 +17,9 @@
 -- ---------- Reset seeded data ----------
 delete from public.lessons where season = '2026-2027';
 delete from public.info_pages where slug in (
-  'lieux', 'inscriptions', 'association', 'contact',           -- association
-  'westy-welsh', 'westy-pass', 'westy-acces',                  -- festival
-  'acces', 'billetterie', 'sur-place'                          -- legacy demo
+  'lieux', 'inscriptions', 'association', 'contact',                                          -- association
+  'westy-welsh', 'westy-niveaux', 'westy-pass', 'westy-acces', 'westy-resto', 'westy-loger',  -- festival
+  'acces', 'billetterie', 'sur-place'                                                         -- legacy demo
 );
 delete from public.editions where id = '11111111-1111-1111-1111-111111111111';
 
@@ -79,70 +80,123 @@ insert into public.info_pages (edition_id, slug, icon, sort_order, title_fr, tit
      || 'Email: westinlille@gmail.com');
 
 -- ============================================================
--- FESTIVAL — Westy Welsh (édition en cours)
--- Contenu à adapter depuis westinlille.odoo.com/westy-welsh
+-- FESTIVAL — Westy Welsh 2026 (édition en cours)
+-- « The Event lillois 100% social WCS » — 29 au 31 mai 2026, Btwin Village
 -- ============================================================
 insert into public.editions (id, name, year, starts_on, ends_on, is_current) values
-  ('11111111-1111-1111-1111-111111111111', 'Westy Welsh', 2027, '2027-03-19', '2027-03-21', true);
+  ('11111111-1111-1111-1111-111111111111', 'Westy Welsh', 2026, '2026-05-29', '2026-05-31', true);
 
--- Salles du festival
+-- Les 2 salles du Btwin Village (espace de soirée de plus de 800 m², climatisé)
 insert into public.stages (id, edition_id, name, color, sort_order) values
   ('21111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Grande salle', '#7C5CFC', 0),
-  ('21111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111111', 'Studio', '#00A97F', 1);
+  ('21111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111111', 'Salle 2', '#00A97F', 1);
 
--- Artistes invités (pros & DJs)
+-- Le pro staff : 2 couples de champions
 insert into public.artists (id, edition_id, name, style, bio) values
-  ('31111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Guest Pros', 'West Coast Swing', 'Couple de pros invité pour les workshops et les shows du week-end. À compléter avec les vrais noms de l''édition.'),
-  ('31111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111111', 'DJ Westy', 'WCS DJ', 'Aux platines des soirées : pop, RnB, blues et grooves pour danser jusqu''au bout de la nuit.');
+  ('31111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Ken & Bryn', 'Champions US — vibe hiphop', 'Top 2 à l''US Open, Ken et Bryn sont connus pour leur vibe hiphop et détendue, ainsi que leur précision technique et leur très riche interprétation musicale 😍 Plein d''humour et très accessibles, ce duo très rarement présent en France va nous en mettre plein les yeux et plein le cœur.'),
+  ('31111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111111', 'Joao & Savana', 'Technique & shows', 'On ne peut plus s''en passer : leur énergie, leur bonne humeur, leur complicité font partie de la recette à succès du Westy Welsh. Attendez-vous à des cours remplis de technique et de bienveillance, à des shows incroyables et à des chorés toujours plus renversantes 😊');
 
--- Programme : workshops, socials et compétitions
+-- Programme (horaires prévisionnels — le planning détaillé par niveau est à
+-- affiner dans l'admin à partir du programme officiel publié sur le site)
 insert into public.activities (edition_id, stage_id, artist_id, title, description, category, starts_at, ends_at, capacity) values
-  -- Vendredi soir
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111112', 'Welcome party', 'Soirée d''ouverture du Westy Welsh — social dance et retrouvailles.', 'dance', '2027-03-19 21:00+01', '2027-03-20 02:00+01', null),
-  -- Samedi — workshops
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Workshop Novice', 'Atelier niveau novice avec les pros invités.', 'workshop', '2027-03-20 10:30+01', '2027-03-20 11:45+01', 40),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Workshop Intermédiaire', 'Atelier niveau intermédiaire : musicalité et connexion.', 'workshop', '2027-03-20 12:00+01', '2027-03-20 13:15+01', 40),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Workshop Avancé', 'Atelier niveau avancé : technique et styling.', 'workshop', '2027-03-20 14:30+01', '2027-03-20 15:45+01', 40),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Jack & Jill — Prélims', 'Préliminaires de la compétition Jack & Jill, tous niveaux.', 'talk', '2027-03-20 16:30+01', '2027-03-20 18:00+01', null),
-  -- Samedi soir — gala
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111111', 'Show des pros', 'Démonstration des pros invités.', 'other', '2027-03-20 21:30+01', '2027-03-20 22:00+01', null),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111112', 'Gala night', 'La grande soirée du festival avec DJ Westy.', 'dance', '2027-03-20 22:00+01', '2027-03-21 04:00+01', null),
-  -- Dimanche
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Workshop All-star', 'Atelier avancé/all-star pour finir le week-end en beauté.', 'workshop', '2027-03-21 11:00+01', '2027-03-21 12:15+01', 40),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Jack & Jill — Finales', 'Finales de la compétition Jack & Jill et remise des prix.', 'talk', '2027-03-21 14:00+01', '2027-03-21 15:30+01', null),
-  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111112', 'Farewell social', 'Dernière danse tous ensemble avant l''année prochaine.', 'dance', '2027-03-21 15:30+01', '2027-03-21 18:00+01', null);
+  -- Vendredi 29 mai
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Intensif « Mets du HipHop dans ton WCS » — Follower avec Bryn', '1h30 avec votre championne pour apprendre à placer des mouvements de hiphop dans vos basics de WCS. Inscription sans partenaire.', 'workshop', '2026-05-29 18:30+02', '2026-05-29 20:00+02', 30),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111111', 'Intensif « Mets du HipHop dans ton WCS » — Leader avec Ken', '1h30 avec votre champion pour apprendre à placer des mouvements de hiphop dans vos basics de WCS. Inscription sans partenaire.', 'workshop', '2026-05-29 18:30+02', '2026-05-29 20:00+02', 30),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Soirée du vendredi', '100% social dancing pour lancer le week-end — jusqu''à 3h du matin !', 'dance', '2026-05-29 21:00+02', '2026-05-30 03:00+02', null),
+  -- Samedi 30 mai — cours par niveau (créneaux prévisionnels)
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111111', 'Cours Niveau 1 & 2', 'Workshops avec Ken & Bryn et Joao & Savana — 5h30 de cours par niveau sur le week-end.', 'workshop', '2026-05-30 10:00+02', '2026-05-30 13:00+02', null),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111112', 'Cours Niveau 3, 4 & Nov/Inter', 'Workshops avec les deux couples de champions — technique, musicalité et styling.', 'workshop', '2026-05-30 10:00+02', '2026-05-30 13:00+02', null),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111112', 'Atelier « Choré fun leader & follow styling »', 'L''atelier chorégraphie du week-end, fun et ouvert à tous les niveaux du stage.', 'workshop', '2026-05-30 14:30+02', '2026-05-30 16:00+02', null),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Cours par niveau — après-midi', 'Suite des workshops par niveau avec le pro staff.', 'workshop', '2026-05-30 16:15+02', '2026-05-30 18:15+02', null),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Dîner traiteur — Saveurs et Chefs', 'Le restaurant vient à nous ! Notre traiteur Rémy régale nos papilles avec une sélection de plats. Maximum 100 places, au Btwin Village.', 'other', '2026-05-30 20:00+02', '2026-05-30 21:30+02', 100),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', '31111111-1111-1111-1111-111111111112', 'Soirée du samedi — avec shows !', 'La grande soirée du Westy Welsh : shows de Ken & Bryn et de Joao & Savana, social dancing jusqu''à 4h !', 'dance', '2026-05-30 21:30+02', '2026-05-31 04:00+02', null),
+  -- Dimanche 31 mai
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Cours par niveau — dimanche', 'Derniers workshops du week-end avec le pro staff.', 'workshop', '2026-05-31 11:00+02', '2026-05-31 13:30+02', null),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Soirée du dimanche — farewell', 'Dernière danse tous ensemble pour clore le week-end (16h-18h).', 'dance', '2026-05-31 16:00+02', '2026-05-31 18:00+02', null);
 
 -- Pages d'infos du festival (edition_id = Westy Welsh)
 insert into public.info_pages (edition_id, slug, icon, sort_order, title_fr, title_en, body_fr, body_en) values
-  ('11111111-1111-1111-1111-111111111111', 'westy-welsh', 'sparkles', 0, 'Le Westy Welsh', 'The Westy Welsh',
-   'Le Westy Welsh, c''est le festival de West Coast Swing de West in Lille : un week-end de workshops avec des pros invités, de compétitions Jack & Jill et de soirées dansantes.' || E'\n\n'
-     || 'Programme, line-up et infos pratiques sont dans cet onglet. Construisez votre week-end en ajoutant les activités à « Mon planning ».' || E'\n\n'
-     || 'Programme prévisionnel — détails à confirmer sur www.westinlille.fr/westy-welsh.',
-   'The Westy Welsh is West in Lille''s West Coast Swing festival: a weekend of workshops with guest pros, Jack & Jill competitions and social dance parties.' || E'\n\n'
-     || 'Programme, lineup and practical info are in this tab. Build your weekend by adding activities to "My schedule".' || E'\n\n'
-     || 'Provisional programme — details to be confirmed on www.westinlille.fr/westy-welsh.'),
-  ('11111111-1111-1111-1111-111111111111', 'westy-pass', 'ticket', 1, 'Pass & tarifs', 'Passes & pricing',
-   'Full Pass — accès à tous les workshops, compétitions et soirées du week-end.' || E'\n\n'
-     || 'Party Pass — accès aux soirées uniquement (welcome party, gala night, farewell).' || E'\n\n'
-     || 'Les tarifs et la billetterie sont sur www.westinlille.fr/westy-welsh.',
-   'Full Pass — access to all workshops, competitions and parties of the weekend.' || E'\n\n'
-     || 'Party Pass — parties only (welcome party, gala night, farewell).' || E'\n\n'
-     || 'Pricing and tickets on www.westinlille.fr/westy-welsh.'),
-  ('11111111-1111-1111-1111-111111111111', 'westy-acces', 'car', 2, 'Accès & hébergement', 'Getting there & staying',
-   'Le festival se tient à Lille, accessible en métro et en train (gares Lille-Flandres et Lille-Europe).' || E'\n\n'
-     || 'Des hôtels partenaires et des solutions de covoiturage sont proposés sur www.westinlille.fr/westy-welsh.',
-   'The festival takes place in Lille, reachable by metro and train (Lille-Flandres and Lille-Europe stations).' || E'\n\n'
-     || 'Partner hotels and carpooling options are listed on www.westinlille.fr/westy-welsh.');
+  ('11111111-1111-1111-1111-111111111111', 'westy-welsh', 'sparkles', 0, 'Bienvenue au Westy Welsh 2026', 'Welcome to Westy Welsh 2026',
+   '🔥 Votre stage lillois 100% West Coast Swing, du 29 au 31 mai 2026, organisé par West in Lille !' || E'\n\n'
+     || '😍 2 couples de champions : Ken & Bryn et Joao & Savana.' || E'\n\n'
+     || '👨‍🎓 5 niveaux, un atelier de « choré fun leader et follow styling », 5h30 de cours par niveau !' || E'\n\n'
+     || '💃 3 soirées : vendredi (jusqu''à 3h), samedi (jusqu''à 4h avec shows !), dimanche (16h-18h) — horaires prévisionnels.' || E'\n\n'
+     || '😎 Un nouveau lieu : 2 salles pour un espace de soirée de plus de 800 m², climatisé et DANS Lille 🤩' || E'\n\n'
+     || 'Du 100% social dancing pour profiter à 100% de votre week-end et découvrir notre belle ville en même temps !' || E'\n\n'
+     || '🔥 NOUVEAU : intensifs « Mets du HipHop dans ton WCS » le vendredi soir — inscris-toi sans partenaire à l''intensif follower avec Bryn ou leader avec Ken !' || E'\n\n'
+     || 'Inscriptions : formulaire en ligne sur westinlille.odoo.com/westy-welsh (bouton « Je m''inscris à l''event ! »).',
+   '🔥 Your 100% West Coast Swing weekend in Lille, 29–31 May 2026, organised by West in Lille!' || E'\n\n'
+     || '😍 2 couples of champions: Ken & Bryn and Joao & Savana.' || E'\n\n'
+     || '👨‍🎓 5 levels, a fun "leader & follow styling" choreo workshop, 5.5 hours of classes per level!' || E'\n\n'
+     || '💃 3 parties: Friday (until 3am), Saturday (until 4am with shows!), Sunday (4–6pm) — provisional times.' || E'\n\n'
+     || '😎 A new venue: 2 rooms, an air-conditioned 800 m² party space, right in Lille 🤩' || E'\n\n'
+     || '100% social dancing to enjoy your weekend to the fullest and discover our beautiful city!' || E'\n\n'
+     || '🔥 NEW: "Put some HipHop in your WCS" intensives on Friday evening — register solo for the follower intensive with Bryn or the leader intensive with Ken!' || E'\n\n'
+     || 'Registration: online form at westinlille.odoo.com/westy-welsh.'),
+  ('11111111-1111-1111-1111-111111111111', 'westy-niveaux', 'school', 1, 'Les niveaux', 'Levels',
+   'Niveau 1 — J''ai démarré en septembre 2025 ou janvier 2026. Je suis MOTIVÉ·E 💃🕺' || E'\n\n'
+     || 'Niveau 2 — C''est ma seconde année de WCS, je commence à être à l''aise sur les classiques. Je commence les choses sérieuses ! 😤' || E'\n\n'
+     || 'Niveau 3 — Je suis complètement à l''aise sur tous les classiques et je fais déjà des variations. Je veux travailler la musicalité, le styling et des variations plus complexes 🪩' || E'\n\n'
+     || 'Niveau 4 — Avancé : j''ai une large expérience du WCS, je fais beaucoup de stages et d''événements nationaux, et je veux me challenger ! 💪' || E'\n\n'
+     || 'Niveau Nov/Inter WSDC — Cours technique et challengeant, je sais à quoi m''attendre 🤜🤛 Prérequis : au moins 1 point WSDC en compétition Novice.',
+   'Level 1 — I started in September 2025 or January 2026. I am MOTIVATED 💃🕺' || E'\n\n'
+     || 'Level 2 — My second year of WCS, getting comfortable with the classics. Time to get serious! 😤' || E'\n\n'
+     || 'Level 3 — Fully comfortable with all the classics and already doing variations. I want to work on musicality, styling and more complex variations 🪩' || E'\n\n'
+     || 'Level 4 — Advanced: broad WCS experience, lots of workshops and national events, here to challenge myself! 💪' || E'\n\n'
+     || 'Nov/Inter WSDC level — Technical and challenging classes 🤜🤛 Prerequisite: at least 1 WSDC point in Novice competition.'),
+  ('11111111-1111-1111-1111-111111111111', 'westy-pass', 'ticket', 2, 'Les pass et tarifs', 'Passes & pricing',
+   'La grille complète des pass et tarifs est publiée sur westinlille.odoo.com/westy-welsh.' || E'\n\n'
+     || 'Inscriptions à l''event : formulaire en ligne (bouton « Je m''inscris à l''event ! » sur le site).' || E'\n\n'
+     || 'Intensifs HipHop du vendredi : inscription séparée, tarifs imbattables pour profiter de la venue de nos champions américains :)' || E'\n\n'
+     || 'Retrouvez aussi l''événement sur Facebook : Event Westy Welsh.',
+   'The full pass & price grid is published on westinlille.odoo.com/westy-welsh.' || E'\n\n'
+     || 'Event registration: online form ("Je m''inscris à l''event !" button on the website).' || E'\n\n'
+     || 'Friday HipHop intensives: separate registration, unbeatable prices to make the most of our American champions'' visit :)' || E'\n\n'
+     || 'Also find the event on Facebook.'),
+  ('11111111-1111-1111-1111-111111111111', 'westy-acces', 'car', 3, 'Lieu, transport et plan d''accès', 'Venue & getting there',
+   '📍 Lieu : Btwin Village, 4 rue Professeur Langevin, 59000 Lille (France).' || E'\n\n'
+     || 'Parking sur place, accès immédiat depuis l''A1, rocade sud de Lille.' || E'\n\n'
+     || 'En transports en commun lillois :' || E'\n'
+     || '• Métro : Porte de Valenciennes' || E'\n'
+     || '• Bus : ligne 52, arrêt Frères Lumières' || E'\n'
+     || '• V''Lille : borne directement au pied de l''event' || E'\n\n'
+     || 'En train : TGV gare Lille Flandres ou Lille Europe puis métro. Eurostar London St Pancras – Lille Europe, Thalys Brussels – Lille.' || E'\n\n'
+     || 'En avion : aéroport de Lille Lesquin + 10 min de taxi, ou Paris CDG + 55 min de TGV puis métro.',
+   '📍 Venue: Btwin Village, 4 rue Professeur Langevin, 59000 Lille (France).' || E'\n\n'
+     || 'On-site parking, direct access from the A1 motorway (Lille south ring road).' || E'\n\n'
+     || 'By Lille public transport:' || E'\n'
+     || '• Metro: Porte de Valenciennes' || E'\n'
+     || '• Bus: line 52, Frères Lumières stop' || E'\n'
+     || '• V''Lille bike share: station right at the venue' || E'\n\n'
+     || 'By train: TGV to Lille Flandres or Lille Europe then metro. Eurostar London St Pancras – Lille Europe, Thalys Brussels – Lille.' || E'\n\n'
+     || 'By plane: Lille Lesquin airport + 10 min taxi, or Paris CDG + 55 min TGV then metro.'),
+  ('11111111-1111-1111-1111-111111111111', 'westy-resto', 'restaurant', 4, 'Restauration', 'Food',
+   'Samedi soir — cette année, il n''y avait pas de resto pratique dans les alentours, alors le restaurant vient à nous !' || E'\n\n'
+     || 'Notre traiteur Rémy de « Saveurs et Chefs » vient régaler nos papilles avec une sélection de plats. Maximum 100 places, au Btwin Village, samedi soir à 20h — pensez à réserver depuis le programme !',
+   'Saturday evening — no convenient restaurant nearby this year, so the restaurant comes to us!' || E'\n\n'
+     || 'Our caterer Rémy from "Saveurs et Chefs" will treat us to a selection of dishes. Maximum 100 seats, at the Btwin Village, Saturday 8pm — remember to book from the programme!'),
+  ('11111111-1111-1111-1111-111111111111', 'westy-loger', 'bed', 5, 'Se loger et se véhiculer', 'Staying & getting around',
+   '🏨 Hôtels partenaires :' || E'\n'
+     || '• Best Western Urban Hôtel & Rococo Restaurant — 48bis rue de Valenciennes, 59000 Lille' || E'\n'
+     || '• MOXY Lille City — rue Jean Bart, 59000 Lille' || E'\n\n'
+     || 'Il existe d''autres hôtels plus proches du lieu de l''évènement, mais dont nous ne pouvons pas garantir le niveau de service.' || E'\n\n'
+     || '🚗 Covoiturage — on aime partager les totos ! Un document partagé permet de proposer ou trouver un covoiturage au départ de Lille ou d''ailleurs (lien sur westinlille.odoo.com/westy-welsh).',
+   '🏨 Partner hotels:' || E'\n'
+     || '• Best Western Urban Hôtel & Rococo Restaurant — 48bis rue de Valenciennes, 59000 Lille' || E'\n'
+     || '• MOXY Lille City — rue Jean Bart, 59000 Lille' || E'\n\n'
+     || 'Other hotels are closer to the venue but we cannot vouch for their level of service.' || E'\n\n'
+     || '🚗 Carpooling — a shared document lets you offer or find a ride from Lille or elsewhere (link on westinlille.odoo.com/westy-welsh).');
 
--- Plan du festival
+-- Plan du site — Btwin Village
 insert into public.floorplans (id, edition_id, name, image_url) values
-  ('41111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Plan du festival', null)
+  ('41111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Btwin Village — 4 rue Professeur Langevin, Lille', null)
 on conflict (id) do nothing;
 
 delete from public.floorplan_pois where floorplan_id = '41111111-1111-1111-1111-111111111111';
 insert into public.floorplan_pois (floorplan_id, name, description, icon, x, y) values
-  ('41111111-1111-1111-1111-111111111111', 'Grande salle', 'Soirées, shows et compétitions', 'musical-notes', 0.35, 0.30),
-  ('41111111-1111-1111-1111-111111111111', 'Studio', 'Workshops', 'body', 0.70, 0.45),
+  ('41111111-1111-1111-1111-111111111111', 'Grande salle', 'Soirées, shows et cours', 'musical-notes', 0.35, 0.30),
+  ('41111111-1111-1111-1111-111111111111', 'Salle 2', 'Cours et intensifs', 'body', 0.70, 0.45),
   ('41111111-1111-1111-1111-111111111111', 'Accueil / Pass', 'Retrait des pass', 'ticket', 0.50, 0.90),
-  ('41111111-1111-1111-1111-111111111111', 'Buvette', 'Boissons et snacks', 'restaurant', 0.20, 0.65),
-  ('41111111-1111-1111-1111-111111111111', 'Vestiaires', '', 'shirt', 0.85, 0.75);
+  ('41111111-1111-1111-1111-111111111111', 'Espace traiteur', 'Dîner du samedi (Saveurs et Chefs)', 'restaurant', 0.20, 0.65),
+  ('41111111-1111-1111-1111-111111111111', 'Vestiaires', '', 'shirt', 0.85, 0.75),
+  ('41111111-1111-1111-1111-111111111111', 'Parking', 'Parking sur place, accès A1', 'car', 0.12, 0.15);
