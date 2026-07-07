@@ -61,6 +61,9 @@ export default function ActivityDetailScreen() {
           <View style={styles.badges}>
             {data.stage ? <Badge label={data.stage.name} color={data.stage.color} /> : null}
             <Badge label={t(`activity.category.${data.category}`)} tone="primary" />
+            {data.target_role !== 'member' ? (
+              <Badge label={t(`activity.target.${data.target_role}`)} tone="warning" />
+            ) : null}
           </View>
         </View>
 

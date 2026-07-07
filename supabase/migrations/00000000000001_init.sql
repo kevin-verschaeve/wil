@@ -3,7 +3,8 @@
 -- ============================================================
 
 -- ---------- Enums ----------
-create type public.user_role as enum ('member', 'teacher', 'admin');
+-- Hierarchical roles: admin > volunteer > member.
+create type public.user_role as enum ('member', 'volunteer', 'admin');
 create type public.activity_category as enum ('concert', 'workshop', 'dance', 'talk', 'other');
 create type public.lesson_level as enum ('all', 'beginner', 'intermediate', 'advanced');
 create type public.registration_status as enum ('confirmed', 'waitlisted', 'cancelled');
@@ -52,6 +53,24 @@ as $$
   select public.get_my_role() = 'admin';
 $$;
 
+-- Role hierarchy: a user may access content targeted at their role or below.
+create or replace function public.role_rank(r public.user_role)
+returns int
+language sql
+immutable
+as $$
+  select case r when 'admin' then 2 when 'volunteer' then 1 else 0 end;
+$$;
+
+create or replace function public.can_access_role(target public.user_role)
+returns boolean
+language sql
+security definer set search_path = public
+stable
+as $$
+  select public.role_rank(public.get_my_role()) >= public.role_rank(target);
+$$;
+
 -- ---------- Festival ----------
 create table public.editions (
   id uuid primary key default gen_random_uuid(),
@@ -92,6 +111,9 @@ create table public.activities (
   title text not null,
   description text not null default '',
   category public.activity_category not null default 'concert',
+  -- Single audience per activity: members (public programme), volunteers
+  -- (e.g. "préparer la salle") or admins. Higher roles see lower targets.
+  target_role public.user_role not null default 'member',
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   capacity int, -- null = unlimited
@@ -277,12 +299,20 @@ create policy "profiles_select_teacher_participants" on public.profiles
 do $$
 declare t text;
 begin
-  foreach t in array array['editions','stages','artists','activities','floorplans','floorplan_pois','lessons']
+  foreach t in array array['editions','stages','artists','floorplans','floorplan_pois','lessons']
   loop
     execute format('create policy "%1$s_read_all" on public.%1$s for select using (true);', t);
     execute format('create policy "%1$s_admin_write" on public.%1$s for all using (public.is_admin()) with check (public.is_admin());', t);
   end loop;
 end $$;
+
+-- Activities are visible according to their target audience: anonymous
+-- visitors and members see member activities; volunteers also see volunteer
+-- activities; admins see everything.
+create policy "activities_read_targeted" on public.activities
+  for select using (public.can_access_role(target_role));
+create policy "activities_admin_write" on public.activities
+  for all using (public.is_admin()) with check (public.is_admin());
 
 -- Info pages: everyone reads published pages; admins read/write everything.
 create policy "info_pages_read_published" on public.info_pages
@@ -294,7 +324,13 @@ create policy "info_pages_admin_write" on public.info_pages
 create policy "activity_reg_select" on public.activity_registrations
   for select using (user_id = auth.uid() or public.is_admin());
 create policy "activity_reg_insert_own" on public.activity_registrations
-  for insert with check (user_id = auth.uid());
+  for insert with check (
+    user_id = auth.uid()
+    and exists (
+      select 1 from public.activities a
+      where a.id = activity_id and public.can_access_role(a.target_role)
+    )
+  );
 create policy "activity_reg_delete_own" on public.activity_registrations
   for delete using (user_id = auth.uid() or public.is_admin());
 

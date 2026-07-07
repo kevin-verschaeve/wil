@@ -14,7 +14,7 @@ import type { Profile, UserRole } from '@/lib/types';
 import { useAuth } from '@/providers/auth-provider';
 import { useT } from '@/providers/locale-provider';
 
-const ROLES: UserRole[] = ['member', 'teacher', 'admin'];
+const ROLES: UserRole[] = ['member', 'volunteer', 'admin'];
 
 export default function UserFormScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

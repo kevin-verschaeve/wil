@@ -114,6 +114,15 @@ insert into public.activities (edition_id, stage_id, artist_id, title, descripti
   ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111112', '31111111-1111-1111-1111-111111111111', 'Cours par niveau — dimanche', 'Derniers workshops du week-end avec le pro staff.', 'workshop', '2026-05-31 11:00+02', '2026-05-31 13:30+02', null),
   ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', null, 'Soirée du dimanche — farewell', 'Dernière danse tous ensemble pour clore le week-end (16h-18h).', 'dance', '2026-05-31 16:00+02', '2026-05-31 18:00+02', null);
 
+-- Activités d'organisation, ciblées par rôle (invisibles pour les membres)
+insert into public.activities (edition_id, stage_id, title, description, category, target_role, starts_at, ends_at, capacity) values
+  ('11111111-1111-1111-1111-111111111111', null, 'Courses boissons & snacks', 'Achat des boissons et snacks pour la buvette du week-end. Rendez-vous au métro Porte de Valenciennes avec un coffre vide !', 'other', 'volunteer', '2026-05-29 10:00+02', '2026-05-29 12:00+02', 4),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', 'Préparer la salle', 'Installation du Btwin Village : parquet, déco, signalétique, espace accueil et buvette.', 'other', 'volunteer', '2026-05-29 14:00+02', '2026-05-29 17:30+02', 10),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', 'Tenir la buvette — soirée du vendredi', 'Shift buvette pendant la soirée d''ouverture (roulement possible pour aller danser !).', 'other', 'volunteer', '2026-05-29 21:00+02', '2026-05-30 01:00+02', 4),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', 'Tenir la buvette — soirée du samedi', 'Shift buvette pendant la grande soirée.', 'other', 'volunteer', '2026-05-30 21:30+02', '2026-05-31 02:00+02', 4),
+  ('11111111-1111-1111-1111-111111111111', '21111111-1111-1111-1111-111111111111', 'Rangement de la salle', 'Démontage et rangement du Btwin Village après le farewell — plus on est nombreux, plus c''est rapide !', 'other', 'volunteer', '2026-05-31 18:00+02', '2026-05-31 20:00+02', null),
+  ('11111111-1111-1111-1111-111111111111', null, 'Débrief orga', 'Débrief de l''édition entre organisateurs : ce qui a marché, ce qu''on améliore l''an prochain.', 'talk', 'admin', '2026-05-31 20:00+02', '2026-05-31 21:00+02', null);
+
 -- Pages d'infos du festival (edition_id = Westy Welsh)
 insert into public.info_pages (edition_id, slug, icon, sort_order, title_fr, title_en, body_fr, body_en) values
   ('11111111-1111-1111-1111-111111111111', 'westy-welsh', 'sparkles', 0, 'Bienvenue au Westy Welsh 2026', 'Welcome to Westy Welsh 2026',

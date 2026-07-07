@@ -43,6 +43,9 @@ export function ActivityCard({ activity, registered, onPress, onToggle, toggling
           {activity.category !== 'concert' ? (
             <Badge label={t(`activity.category.${activity.category}`)} tone="neutral" />
           ) : null}
+          {activity.target_role !== 'member' ? (
+            <Badge label={t(`activity.target.${activity.target_role}`)} tone="warning" />
+          ) : null}
         </View>
       </View>
       <Pressable

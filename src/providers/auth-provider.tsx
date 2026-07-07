@@ -15,7 +15,6 @@ interface AuthContextValue {
   /** Non-null when the signed-in user's profile could not be loaded. */
   profileError: string | null;
   isAdmin: boolean;
-  isTeacher: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => void;
 }
@@ -80,7 +79,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profileLoading: !!userId && profileIsPending,
       profileError: userId && profileIsError ? String(profileQueryError?.message ?? '') : null,
       isAdmin: profile?.role === 'admin',
-      isTeacher: profile?.role === 'teacher' || profile?.role === 'admin',
       signOut: async () => {
         await supabase.auth.signOut();
       },

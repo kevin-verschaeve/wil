@@ -1,4 +1,12 @@
-export type UserRole = 'member' | 'teacher' | 'admin';
+/** Hierarchical roles: admin > volunteer > member. */
+export type UserRole = 'member' | 'volunteer' | 'admin';
+
+const ROLE_RANK: Record<UserRole, number> = { member: 0, volunteer: 1, admin: 2 };
+
+/** True when a user with `role` can access content targeted at `target`. */
+export function canAccessRole(role: UserRole | undefined, target: UserRole): boolean {
+  return ROLE_RANK[role ?? 'member'] >= ROLE_RANK[target];
+}
 export type ActivityCategory = 'concert' | 'workshop' | 'dance' | 'talk' | 'other';
 export type LessonLevel = 'all' | 'beginner' | 'intermediate' | 'advanced';
 export type RegistrationStatus = 'confirmed' | 'waitlisted' | 'cancelled';
@@ -45,6 +53,8 @@ export interface Activity {
   title: string;
   description: string;
   category: ActivityCategory;
+  /** Single target audience; higher roles also have access. */
+  target_role: UserRole;
   starts_at: string; // timestamptz
   ends_at: string; // timestamptz
   capacity: number | null;

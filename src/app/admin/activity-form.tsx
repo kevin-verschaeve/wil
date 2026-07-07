@@ -9,10 +9,11 @@ import { Input } from '@/components/ui/input';
 import { LoadingView } from '@/components/ui/loading';
 import { Screen } from '@/components/ui/screen';
 import { useActivities, useArtists, useDeleteActivity, useStages, useUpsertActivity } from '@/hooks/use-festival';
-import type { ActivityCategory, ActivityWithRelations } from '@/lib/types';
+import type { ActivityCategory, ActivityWithRelations, UserRole } from '@/lib/types';
 import { useT } from '@/providers/locale-provider';
 
 const CATEGORIES: ActivityCategory[] = ['concert', 'workshop', 'dance', 'talk', 'other'];
+const TARGETS: UserRole[] = ['member', 'volunteer', 'admin'];
 
 export default function ActivityFormScreen() {
   const { id, editionId } = useLocalSearchParams<{ id?: string; editionId: string }>();
@@ -44,6 +45,7 @@ function ActivityForm({
   const [title, setTitle] = useState(existing?.title ?? '');
   const [description, setDescription] = useState(existing?.description ?? '');
   const [category, setCategory] = useState<ActivityCategory>(existing?.category ?? 'concert');
+  const [targetRole, setTargetRole] = useState<UserRole>(existing?.target_role ?? 'member');
   const [stageId, setStageId] = useState<string>(existing?.stage_id ?? 'none');
   const [artistId, setArtistId] = useState<string>(existing?.artist_id ?? 'none');
   const [startsAt, setStartsAt] = useState(existing ? existing.starts_at.slice(0, 16) : '');
@@ -65,6 +67,7 @@ function ActivityForm({
         title: title.trim(),
         description,
         category,
+        target_role: targetRole,
         stage_id: stageId === 'none' ? null : stageId,
         artist_id: artistId === 'none' ? null : artistId,
         starts_at: new Date(startsAt).toISOString(),
@@ -95,6 +98,12 @@ function ActivityForm({
         options={CATEGORIES.map((c) => ({ value: c, label: t(`activity.category.${c}`) }))}
         value={category}
         onChange={setCategory}
+      />
+      <ChipSelect
+        label={t('admin.targetRole')}
+        options={TARGETS.map((r) => ({ value: r, label: t(`activity.target.${r}`) }))}
+        value={targetRole}
+        onChange={setTargetRole}
       />
       <ChipSelect
         label={t('admin.stage')}

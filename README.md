@@ -17,7 +17,7 @@ lessons, built with [Expo](https://expo.dev) (React Native + TypeScript) and
 **Dance association**
 - 🕺 **Cours** — the season's weekly lessons with level, schedule, location and teacher
 - ✍️ Registration with automatic **waitlist** when a lesson is full
-- 👀 Teachers see the participant list of their own lessons
+- 👀 A lesson's teacher (linked profile) sees its participant list
 
 **Administration** (role-gated, in-app)
 - Editions (one per year, one “current”), stages, artists, activities
@@ -25,7 +25,8 @@ lessons, built with [Expo](https://expo.dev) (React Native + TypeScript) and
 - Info pages (FR/EN content)
 
 **Cross-cutting**
-- 🔐 Email/password auth (Supabase), roles: `member`, `teacher`, `admin`
+- 🔐 Email/password auth (Supabase), hierarchical roles: `member` < `volunteer` < `admin`
+- 🎯 Festival activities have a single target audience (members / volunteers / admins) — volunteer tasks ("préparer la salle"…) are invisible to members, and higher roles access everything below them
 - 🌍 i18n French / English (French default, switchable in the profile)
 - 🌙 Automatic light / dark theme
 - Browsing is open to everyone; signing in is only needed to register
@@ -71,8 +72,9 @@ update public.profiles set role = 'admin' where id = (
 ```
 
 The **Administration** entry appears in the “Plus” tab after restarting the app
-(or signing out/in). Use `role = 'teacher'` for teachers — when a lesson's
-`teacher_id` points at their profile they can see its participant list.
+(or signing out/in). Admins can then manage everyone's names and roles from
+Administration → Utilisateurs. Use `role = 'volunteer'` for volunteers — they
+see and register to volunteer-targeted festival activities.
 
 ## Building for the stores
 
@@ -115,7 +117,8 @@ supabase/
 
 **Security model** — all authorization lives in Postgres RLS policies, not in the
 client: public content is world-readable, users can only write their own
-registrations, `is_admin()` gates every admin mutation, and teachers can only read
+registrations, `is_admin()` gates every admin mutation, activity visibility and
+registration follow the role hierarchy (`can_access_role`), and lesson teachers can only read
 registrations of their own lessons. Capacity rules (activity full, lesson waitlist)
 are enforced by database triggers, so they hold even under concurrent registrations.
 
