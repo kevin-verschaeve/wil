@@ -129,8 +129,10 @@ survenue”. The common ones:
   `notify pgrst, 'reload schema';` (or just wait a minute), then pull to retry.
 - **“infinite recursion detected in policy for relation profiles”** — you are on
   the old schema; run `supabase/migrations/00000000000002_fix_profiles_policies.sql`.
-- **“permission denied for table …”** — the migration was executed with a role
-  other than `postgres`; re-run it from the Supabase dashboard's SQL editor.
+- **“permission denied for table …”** — the API roles (`anon`, `authenticated`)
+  are missing SQL grants on the tables; run
+  `supabase/migrations/00000000000003_grants.sql`. (RLS still controls which
+  rows each user can actually read or write.)
 - **Profile shows no name/role after sign-up** — the profile row is created by
   the `on_auth_user_created` trigger; check it exists in `public.profiles`, then
   use the retry button on the profile screen (the app retries automatically too).
