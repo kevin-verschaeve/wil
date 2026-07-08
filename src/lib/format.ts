@@ -30,6 +30,11 @@ export function formatClock(time: string): string {
   return time.slice(0, 5);
 }
 
+/** '2026-05-29' → 'vendredi 29' / 'Friday 29' */
+export function formatDayLong(date: string, locale: AppLocale): string {
+  return format(parseISO(date), 'EEEE d', { locale: dfLocale(locale) });
+}
+
 /** ISO date → '21 août 2026' / '21 Aug 2026' */
 export function formatFullDate(date: string, locale: AppLocale): string {
   return format(parseISO(date), 'd MMM yyyy', { locale: dfLocale(locale) });

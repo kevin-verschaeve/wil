@@ -172,6 +172,7 @@ export const en: Dict = {
     endsAt: 'Ends',
     capacity: 'Capacity',
     capacityHint: 'Leave empty for unlimited',
+    overnightHint: 'An end time before the start time means the activity runs past midnight (e.g. a party from 9:30pm to 4am).',
     none: 'None',
     newArtist: 'New artist',
     editArtist: 'Edit artist',

@@ -170,6 +170,7 @@ export const fr = {
     endsAt: 'Fin',
     capacity: 'Capacité',
     capacityHint: 'Laisser vide pour illimité',
+    overnightHint: 'Une heure de fin avant l\u2019heure de début signifie que l\u2019activité se termine le lendemain (ex. soirée de 21h30 à 4h).',
     none: 'Aucun·e',
     newArtist: 'Nouvel artiste',
     editArtist: "Modifier l'artiste",
